@@ -1,0 +1,184 @@
+﻿@model UsuarioViewModel
+@{
+    ViewData["Title"] = "Atualizar";
+}
+
+<h1>Atualizar</h1>
+
+<style type="text/css">
+    body {
+        font-family: sans-serif;
+    }
+
+    #confirmBox {
+        display: none;
+        background-color: #eee;
+        border-radius: 5px;
+        border: 1px solid #aaa;
+        position: fixed;
+        width: 300px;
+        left: 50%;
+        margin-left: -150px;
+        padding: 6px 8px 8px;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+        #confirmBox button {
+            background-color: #ccc;
+            display: inline-block;
+            border-radius: 3px;
+            border: 1px solid #aaa;
+            padding: 2px;
+            text-align: center;
+            width: 80px;
+            cursor: pointer;
+        }
+
+            #confirmBox button:hover {
+                background-color: #ddd;
+            }
+
+        #confirmBox .message {
+            text-align: left;
+            margin-bottom: 8px;
+        }
+</style>
+<script>
+    $(document).ready(function () {
+
+
+        $('#btnAtualizar').on('click',
+            function (e) {
+                var vId = $("#Id").val();
+                var vNome = $("#nome").val();
+                var vEMail = $("#eMail").val();
+                var vSenha = $("#senha").val();
+                var endpoint = appPath + 'Home/Atualizar';
+                var objeto = { "Id": vId, "Nome": vNome, "EMail": vEMail, "SenhaHash": vSenha };
+
+
+                $.ajax({
+                    url: endpoint,
+                    type: "POST",
+                    dataType: "json",
+                    data: objeto,
+                    success: function (result) {
+                        if (result !== null && result.id > 0) {
+                            alert("Dados atualizados com sucesso");
+                        }
+                        else {
+                            alert("Não foi possível atualizar os dados. \r\nPor favor, tente mais tarde!");
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        if (xhr.status == 401) {
+                            alert("Session Expired!");
+                        }
+                        else {
+                            alert('Content load failed!', "info");
+                        }
+                    }
+                });
+                e.preventDefault();
+            });
+
+        //$('#btnExcluir').on('click',
+        //    function (e) {
+
+        //        e.preventDefault();
+        //    });
+    });
+
+    function doConfirm(msg, yesFn, noFn) {
+        var confirmBox = $("#confirmBox");
+        confirmBox.find(".message").text(msg);
+        confirmBox.find(".sim,.nao").unbind().click(function () {
+            confirmBox.hide();
+        });
+        confirmBox.find(".sim").click(yesFn);
+        confirmBox.find(".naoo").click(noFn);
+        confirmBox.show();
+    }
+
+
+    function excluir() {
+
+        doConfirm("Deseja realmente excluir o usuário?",
+            function sim() {
+
+                var vId = $("#Id").val();
+                var endpoint = appPath + 'Home/Excluir?id=' + vId;
+
+                $.ajax({
+                    url: endpoint,
+                    type: "DELETE",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result !== null && result.data === true) {
+                            alert("Usuário excluído com sucesso");
+                            setTimeout(function () {window.location.href = appPath + 'Home/Index'; }, 5000);
+                        }
+                        else {
+                            alert("Não foi possível excluir os dados. \r\nPor favor, tente mais tarde!");
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        if (xhr.status == 401) {
+                            alert("Session Expired!");
+                        }
+                        else {
+                            alert('Content load failed!', "info");
+                        }
+                    }
+                });
+            },
+            function nao() {
+            });
+    }
+</script>
+
+<div id="confirmBox" style="display:none;">
+    <div class="message"></div>
+    <button class="sim">Sim</button>
+    <button class="nao">Nao</button>
+</div>
+
+<div class="text-center">
+    <div id="Panel1">
+        <div id="divAtualizar">
+            <div style="align-content:center; position: relative;">
+                <table border="0" align="left" style="margin-top: 65px; padding: 5px 15px 0 22px; background-color: #E0E0E2 !important;width:300px;">
+                    <tr>
+                        <td colspan="3" style="align-content:center;"><b>Avaliação Prática</b>@Html.HiddenFor(model => model.Id)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="left" style="font-family: Calibri; font-size: 20px;">
+                            &nbsp;&nbsp;&nbsp;Nome:
+                        </td>
+                        <td><input type="text" name="nome" id="nome" value="@Model.Nome" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="left" style="font-family: Calibri; font-size: 20px;">
+                            &nbsp;&nbsp;&nbsp;E-Mail:
+                        </td>
+                        <td><input type="text" name="eMail" id="eMail" value="@Model.EMail" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="left" style="font-family: Calibri; font-size: 20px;">
+                            &nbsp;&nbsp;&nbsp;Senha:
+                        </td>
+                        <td><input type="password" name="senha" id="senha" value="@Model.SenhaHash" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><button id="btnAtualizar" class="btn btn-primary">Atualizar</button>&nbsp;&nbsp;<button id="btnExcluir" onclick="excluir();" class="btn btn-secondary">Excluir</button></td>
+                    </tr>
+                    <tr><td colspan="3">&nbsp;</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

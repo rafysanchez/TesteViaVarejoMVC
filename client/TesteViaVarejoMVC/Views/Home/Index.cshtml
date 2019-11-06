@@ -1,0 +1,86 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<head>
+    <title>
+        Login
+    </title>
+    @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>*@
+
+    <script>
+        $(document).ready(function () {
+
+            $('#messageUsuarioInvalido').hide();
+
+            $('#btnEntrar').on('click',
+                function (e) {
+                    var vEMail = $("#eMail").val();
+                    var vSenha = $("#senha").val();
+                    var endpoint = appPath + 'Home/Logar';
+                    var objeto = { "Id": 0, "Nome": "x", "EMail": vEMail, "SenhaHash": vSenha };
+                    
+
+                    $.ajax({
+                        url: endpoint,
+                        type: "POST",
+                        //contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        data: objeto,
+                        success: function (result) {
+                            if (result !== null && result.id > 0) {
+                                window.location.href = 'Home/Atualizar?id=' + result.id;
+                            }
+                            else {
+                                $('#messageUsuarioInvalido').show();
+                            }
+                        },
+                        error: function (xhr, textStatus, errorThrown) {
+                            if (xhr.status == 401) {
+                                alert("Session Expired!");
+                            }
+                        else {
+                                alert('Content load failed!', "info");
+                            }
+                        }
+                    });
+                    e.preventDefault();
+                });
+        });
+    </script>
+</head>
+<div class="text-center">
+    <div id="Panel1">
+        <div id="divTelaLogin">
+            <div style="align-content:center; position: relative;">
+                <table border="0" align="left" style="margin-top: 65px; padding: 5px 15px 0 22px; background-color: #E0E0E2 !important;width:300px;">
+                    <tr>
+                        <td colspan="3" style="align-content:center;"><b>Avaliação Prática</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="left" style="font-family: Calibri; font-size: 20px;">
+                            &nbsp;&nbsp;&nbsp;E-Mail:
+                        </td>
+                        <td><input type="text" name="eMail" id="eMail" value="" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="left" style="font-family: Calibri; font-size: 20px;">
+                            &nbsp;&nbsp;&nbsp;Senha:
+                        </td>
+                        <td><input type="password" name="senha" id="senha" value="" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><button id="btnEntrar" class="btn btn-primary">Entrar</button></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><a href="~/Home/Cadastrar?id=0" rel="stylesheet">Cadastrar</a></td>
+                    </tr>
+                    <tr><td colspan="3">&nbsp;</td></tr>
+                    <tr><td colspan="3"><label id="messageUsuarioInvalido" style="display:none;text-align:center;color:red">Usuário inválido</label></td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

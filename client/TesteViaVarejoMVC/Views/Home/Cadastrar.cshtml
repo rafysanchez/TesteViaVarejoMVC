@@ -1,0 +1,85 @@
+﻿
+@{
+    ViewData["Title"] = "Cadastrar";
+}
+
+<h1>Cadastrar</h1>
+
+<script>
+        $(document).ready(function () {
+            
+            $('#btnCadastrar').on('click',
+                function (e) {
+                    var vNome = $("#nome").val();
+                    var vEMail = $("#eMail").val();
+                    var vSenha = $("#senha").val();
+                    var endpoint = appPath + 'Home/Cadastrar';
+                    var objeto = { "Id": 0, "Nome": vNome, "EMail": vEMail, "SenhaHash": vSenha };
+
+
+                    $.ajax({
+                        url: endpoint,
+                        type: "POST",
+                        dataType: "json",
+                        data: objeto,
+                        success: function (result) {
+                            if (result !== null && result.id > 0) {
+                                alert("Dados inseridos com sucesso");
+                                setTimeout(function () {
+                                    window.location.href = appPath + 'Home/Atualizar?id=' + result.id; }, 5000);
+                            }
+                            else {
+                                alert("Não foi possível inserir os dados. \r\nPor favor, tente mais tarde!");
+                            }
+                        },
+                        error: function (xhr, textStatus, errorThrown) {
+                            if (xhr.status == 401) {
+                                alert("Session Expired!");
+                            }
+                        else {
+                                alert('Content load failed!', "info");
+                            }
+                        }
+                    });
+                    e.preventDefault();
+                });
+        });
+</script>
+<div class="text-center">
+    <div id="Panel1">
+        <div id="divAtualizar">
+            <div style="align-content:center; position: relative;">
+                <table border="0" align="left" style="margin-top: 65px; padding: 5px 15px 0 22px; background-color: #E0E0E2 !important;width:300px;">
+                    <tr>
+                        <td colspan="3" style="align-content:center;"><b>Avaliação Prática</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="left" style="font-family: Calibri; font-size: 20px;">
+                            &nbsp;&nbsp;&nbsp;Nome:
+                        </td>
+                        <td><input type="text" name="nome" id="nome" value="" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="left" style="font-family: Calibri; font-size: 20px;">
+                            &nbsp;&nbsp;&nbsp;E-Mail:
+                        </td>
+                        <td><input type="text" name="eMail" id="eMail" value="" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="left" style="font-family: Calibri; font-size: 20px;">
+                            &nbsp;&nbsp;&nbsp;Senha:
+                        </td>
+                        <td><input type="password" name="senha" id="senha" value="" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><button id="btnCadastrar" class="btn btn-primary">Inserir</button></td>
+                    </tr>
+                    <tr><td colspan="3">&nbsp;</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
