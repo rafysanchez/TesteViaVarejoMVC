@@ -27,3 +27,4 @@ Premissas:
  O salt deve ser o seu nome
  Utilizar os conceitos web api rest
  Caso conheça algum padrão pode utilizar
+..
